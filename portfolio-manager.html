@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mahir Elite | Projects Manager</title>
+<style>
+:root {
+  --bg: #0b0d12;
+  --panel: #151a23;
+  --line: #2b3342;
+  --text: #f5f7fb;
+  --muted: #9ba6b8;
+  --accent: #a5f52b;
+  --red: #ff637b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 28px;
+  background: var(--bg); color: var(--text);
+  font: 15px Arial, sans-serif;
+}
+header {
+  display: flex; justify-content: space-between;
+  align-items: center; gap: 15px; flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+h1 { margin: 5px 0; font-size: 32px; }
+h2 { font-size: 19px; }
+p { color: var(--muted); line-height: 1.6; }
+.accent { color: var(--accent); }
+button {
+  cursor: pointer; border: 0; border-radius: 9px;
+  padding: 11px 15px; font-weight: bold;
+}
+.primary { background: var(--accent); color: #10140a; }
+.secondary { background: #252c38; color: white; }
+.danger { background: #391923; color: #ff9baa; }
+input, textarea, select {
+  width: 100%; padding: 12px; border-radius: 9px;
+  border: 1px solid var(--line); background: #0e1219;
+  color: white; font: inherit; outline: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+}
+textarea { min-height: 100px; resize: vertical; }
+.stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 14px; margin-bottom: 25px;
+}
+.stat, .card, .form-panel {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 14px; padding: 18px;
+}
+.stat span { color: var(--muted); }
+.stat strong { display: block; font-size: 28px; margin-top: 8px; }
+.toolbar {
+  display: grid; grid-template-columns: 1fr 200px 170px;
+  gap: 10px; margin-bottom: 20px;
+}
+.grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.card { padding: 0; overflow: hidden; }
+.cover {
+  height: 160px; background: #202733;
+  display: grid; place-items: center; position: relative;
+  overflow: hidden;
+}
+.cover img { width: 100%; height: 100%; object-fit: cover; }
+.cover b { font-size: 36px; color: var(--accent); }
+.status {
+  position: absolute; top: 10px; left: 10px;
+  background: #10151ddd; color: var(--accent);
+  padding: 5px 9px; border-radius: 20px; font-size: 11px;
+}
+.card-content { padding: 16px; }
+.card h3 { margin: 0 0 8px; }
+.category { color: var(--accent); font-size: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  background: #252c38; color: #d6dce7;
+  border-radius: 5px; padding: 5px 7px; font-size: 11px;
+}
+.card-actions { display: flex; gap: 7px; margin-top: 16px; }
+.card-actions button { flex: 1; padding: 9px 5px; font-size: 12px; }
+.links { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+a { color: var(--accent); font-size: 12px; }
+.form-panel { margin-bottom: 22px; display: none; }
+.form-panel.open { display: block; }
+.form-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+.field { display: grid; gap: 7px; }
+.field label { color: var(--muted); font-size: 13px; }
+.full { grid-column: 1 / -1; }
+.form-actions {
+  grid-column: 1 / -1; display: flex; gap: 10px;
+  justify-content: flex-end; flex-wrap: wrap;
+}
+.checkbox-row { display: flex; align-items: center; gap: 9px; }
+.checkbox-row input { width: auto; }
+.empty {
+  grid-column: 1 / -1; padding: 40px; text-align: center;
+  border: 1px dashed var(--line); border-radius: 14px;
+  color: var(--muted);
+}
+#message { color: var(--accent); min-height: 22px; margin: 12px 0; }
+footer { text-align: center; color: #657185; margin-top: 35px; font-size: 12px; }
+@media(max-width: 950px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media(max-width: 650px) {
+  body { padding: 16px; }
+  h1 { font-size: 26px; }
+  .stats { gap: 8px; }
+  .stat { padding: 12px; }
+  .stat strong { font-size: 23px; }
+  .toolbar, .grid, .form-grid { grid-template-columns: 1fr; }
+  .full, .form-actions { grid-column: auto; }
+}
+</style>
+</head>
+<body>
+<nav class="portfolio-tools" style="position:sticky;top:0;z-index:999;background:#101010;border-bottom:1px solid #333;padding:12px 18px;display:flex;gap:16px;flex-wrap:wrap"><a href="index.html" style="color:#fff">← Portfolio</a><a href="admin-dashboard.html" style="color:#df2531">Admin Dashboard</a><a href="portfolio-manager.html" style="color:#fff">Project Manager</a><a href="messages.html" style="color:#fff">Messages Inbox</a></nav>
+
+<header>
+  <div>
+    <div class="accent">MAHIR ELITE / PORTFOLIO STUDIO</div>
+    <h1>Projects Manager</h1>
+    <p>Manage your portfolio projects in one place.</p>
+  </div>
+  <div>
+    <button class="secondary" id="exportBtn">Export JSON</button>
+    <button class="secondary" id="importBtn">Import JSON</button>
+    <button class="primary" id="addBtn">+ Add Project</button>
+  </div>
+</header>
+
+<section class="stats">
+  <div class="stat"><span>Total Projects</span><strong id="total">0</strong></div>
+  <div class="stat"><span>Featured Projects</span><strong id="featuredCount">0</strong></div>
+  <div class="stat"><span>Categories</span><strong id="categories">0</strong></div>
+</section>
+
+<section class="form-panel" id="formPanel">
+  <h2 id="formTitle">Add New Project</h2>
+  <form id="projectForm" class="form-grid">
+    <input type="hidden" id="projectId">
+
+    <div class="field">
+      <label for="name">Project Name *</label>
+      <input id="name" required maxlength="100" placeholder="School Management System">
+    </div>
+
+    <div class="field">
+      <label for="category">Category *</label>
+      <select id="category" required>
+        <option>Web Development</option>
+        <option>Web Design</option>
+        <option>Mobile App</option>
+        <option>Data Analysis</option>
+        <option>AI / Bot</option>
+        <option>Graphic Design</option>
+        <option>Video Editing</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="field full">
+      <label for="description">Description *</label>
+      <textarea id="description" required placeholder="Describe your project..."></textarea>
+    </div>
+
+    <div class="field">
+      <label for="image">Cover Image URL or uploaded image</label>
+      <input id="image" type="text" placeholder="Paste an image URL or upload below">
+      <input id="imageFile" type="file" accept="image/*" aria-label="Upload project cover image">
+      <small class="hint">Choose an image from your computer. It will be resized and saved with this project.</small>
+    </div>
+
+    <div class="field">
+      <label for="demo">Live Demo URL</label>
+      <input id="demo" type="url" placeholder="https://your-project.com">
+    </div>
+
+    <div class="field">
+      <label for="github">GitHub URL</label>
+      <input id="github" type="url" placeholder="https://github.com/username/project">
+    </div>
+
+    <div class="field">
+      <label for="tech">Technologies</label>
+      <input id="tech" placeholder="HTML, CSS, JavaScript">
+    </div>
+
+    <div class="field">
+      <label for="status">Project Status</label>
+      <select id="status">
+        <option>Completed</option>
+        <option>In Progress</option>
+        <option>Planning</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="date">Project Date</label>
+      <input id="date" type="date">
+    </div>
+
+    <div class="field full checkbox-row">
+      <input id="featured" type="checkbox">
+      <label for="featured">Feature this project on my portfolio</label>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="secondary" id="cancelBtn">Cancel</button>
+      <button type="submit" class="primary">Save Project</button>
+    </div>
+  </form>
+</section>
+
+<div class="toolbar">
+  <input id="search" placeholder="Search projects, technologies...">
+  <select id="filter">
+    <option value="all">All Categories</option>
+  </select>
+  <select id="sort">
+    <option value="newest">Newest First</option>
+    <option value="oldest">Oldest First</option>
+    <option value="az">Name A–Z</option>
+  </select>
+</div>
+
+<div id="message"></div>
+<section class="grid" id="projectGrid"></section>
+
+<footer>MAHIR ELITE · PORTFOLIO PROJECTS MANAGER · FRONTEND VERSION</footer>
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+
+<script>
+(() => {
+  const KEY = "mahirEliteProjects";
+  const $ = id => document.getElementById(id);
+
+  let projects = [];
+
+  const starterProjects = [
+    {
+      id: "demo1",
+      name: "School Management System",
+      category: "Web Development",
+      description: "A school management platform concept for students, assignments, school information and digital learning.",
+      image: "",
+      demo: "",
+      github: "",
+      tech: "HTML, CSS, JavaScript",
+      status: "In Progress",
+      date: new Date().toISOString().slice(0, 10),
+      featured: true,
+      created: Date.now() - 2000
+    },
+    {
+      id: "demo2",
+      name: "Mahir Elite Portfolio",
+      category: "Web Design",
+      description: "A modern portfolio for showcasing projects, technical skills, awards, training and creative work.",
+      image: "",
+      demo: "",
+      github: "",
+      tech: "HTML, CSS, JavaScript",
+      status: "In Progress",
+      date: new Date().toISOString().slice(0, 10),
+      featured: true,
+      created: Date.now() - 1000
+    }
+  ];
+
+  function id() {
+    return "p_" + Date.now().toString(36) +
+      "_" + Math.random().toString(36).slice(2, 8);
+  }
+
+  function escapeHTML(value = "") {
+    return String(value).replace(/[&<>"']/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;",
+      '"': "&quot;", "'": "&#39;"
+    })[c]);
+  }
+
+  function safeURL(value = "") {
+    if (/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(value)) return value;
+    try { const url = new URL(value); return ["http:", "https:"].includes(url.protocol) ? url.href : ""; }
+    catch { return ""; }
+  }
+
+  async function compressImage(file, maxSide = 1100, quality = 0.72) {
+    if (!file || !file.type.startsWith("image/")) throw new Error("Please choose an image file.");
+    const source = await new Promise((resolve, reject) => { const r = new FileReader(); r.onload = () => resolve(r.result); r.onerror = reject; r.readAsDataURL(file); });
+    const img = await new Promise((resolve, reject) => { const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = source; });
+    const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+    const canvas = document.createElement("canvas"); canvas.width = Math.round(img.naturalWidth * scale); canvas.height = Math.round(img.naturalHeight * scale);
+    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL("image/jpeg", quality);
+  }
+  $("imageFile").addEventListener("change", async e => { const file=e.target.files[0]; if(!file)return; try { $("image").value=await compressImage(file); message("Image ready. Save the project to keep it."); } catch(err) { alert(err.message || "Could not read this image."); } });
+
+  function message(text) {
+    $("message").textContent = text;
+    setTimeout(() => {
+      if ($("message").textContent === text) $("message").textContent = "";
+    }, 3000);
+  }
+
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify(projects));
+  }
+
+  function load() {
+    try {
+      const saved = localStorage.getItem(KEY);
+      if (saved !== null) {
+        const parsed = JSON.parse(saved);
+        projects = Array.isArray(parsed) ? parsed : starterProjects;
+      } else {
+        projects = starterProjects;
+        save();
+      }
+    } catch (error) {
+      projects = starterProjects;
+    }
+  }
+
+  function updateFilters() {
+    const current = $("filter").value;
+    const cats = [...new Set(projects.map(p => p.category).filter(Boolean))].sort();
+    $("filter").innerHTML =
+      '<option value="all">All Categories</option>' +
+      cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("");
+
+    if (cats.includes(current)) $("filter").value = current;
+  }
+
+  function render() {
+    const query = $("search").value.toLowerCase().trim();
+    const category = $("filter").value;
+    const sort = $("sort").value;
+
+    let list = projects.filter(p => {
+      const text = [p.name, p.category, p.description, p.tech, p.status]
+        .join(" ").toLowerCase();
+      return (!query || text.includes(query)) &&
+        (category === "all" || p.category === category);
+    });
+
+    if (sort === "az") {
+      list.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sort === "oldest") {
+      list.sort((a, b) => (a.created || 0) - (b.created || 0));
+    } else {
+      list.sort((a, b) => (b.created || 0) - (a.created || 0));
+    }
+
+    $("total").textContent = projects.length;
+    $("featuredCount").textContent = projects.filter(p => p.featured).length;
+    $("categories").textContent = new Set(projects.map(p => p.category)).size;
+
+    if (!list.length) {
+      $("projectGrid").innerHTML =
+        '<div class="empty">No projects found. Try another search or add a project.</div>';
+      return;
+    }
+
+    $("projectGrid").innerHTML = list.map(p => {
+      const img = safeURL(p.image);
+      const demo = safeURL(p.demo);
+      const github = safeURL(p.github);
+      const tags = (p.tech || "").split(",").map(x => x.trim()).filter(Boolean);
+
+      return `
+        <article class="card">
+          <div class="cover">
+            ${img
+              ? `<img src="${escapeHTML(img)}" alt="${escapeHTML(p.name)} cover" onerror="this.style.display='none'">`
+              : "<b>M.</b>"}
+            <span class="status">${escapeHTML(p.status || "Planning")}</span>
+          </div>
+          <div class="card-content">
+            <div class="category">${escapeHTML(p.category)}</div>
+            <h3>${escapeHTML(p.name)}</h3>
+            <p>${escapeHTML(p.description)}</p>
+            <div class="tags">
+              ${tags.map(t => `<span class="tag">${escapeHTML(t)}</span>`).join("")}
+            </div>
+            <p>${p.featured ? "★ Featured project" : "Standard project"} · ${escapeHTML(p.date || "No date")}</p>
+            <div class="card-actions">
+              <button class="secondary" data-edit="${escapeHTML(p.id)}">Edit</button>
+              <button class="secondary" data-duplicate="${escapeHTML(p.id)}">Copy</button>
+              <button class="danger" data-delete="${escapeHTML(p.id)}">Delete</button>
+            </div>
+            <div class="links">
+              ${demo ? `<a href="${escapeHTML(demo)}" target="_blank" rel="noopener">Live Demo ↗</a>` : ""}
+              ${github ? `<a href="${escapeHTML(github)}" target="_blank" rel="noopener">GitHub ↗</a>` : ""}
+            </div>
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  function openForm(project = null) {
+    $("projectForm").reset();
+    $("projectId").value = project ? project.id : "";
+    $("formTitle").textContent = project ? "Edit Project" : "Add New Project";
+
+    $("name").value = project?.name || "";
+    $("category").value = project?.category || "Web Development";
+    $("description").value = project?.description || "";
+    $("image").value = project?.image || "";
+    $("demo").value = project?.demo || "";
+    $("github").value = project?.github || "";
+    $("tech").value = project?.tech || "";
+    $("status").value = project?.status || "Planning";
+    $("date").value = project?.date || new Date().toISOString().slice(0, 10);
+    $("featured").checked = !!project?.featured;
+
+    $("formPanel").classList.add("open");
+    $("formPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function closeForm() {
+    $("formPanel").classList.remove("open");
+    $("projectForm").reset();
+    $("projectId").value = "";
+  }
+
+  $("addBtn").addEventListener("click", () => openForm());
+  $("cancelBtn").addEventListener("click", closeForm);
+
+  $("projectForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const idValue = $("projectId").value;
+    const old = projects.find(p => p.id === idValue);
+
+    const image = $("image").value.trim();
+    const demo = $("demo").value.trim();
+    const github = $("github").value.trim();
+
+    for (const [url, label] of [
+      [image, "Cover image"],
+      [demo, "Demo"],
+      [github, "GitHub"]
+    ]) {
+      if (url && !safeURL(url)) {
+        alert(label + " must be a valid HTTP/HTTPS URL or an uploaded image.");
+        return;
+      }
+    }
+
+    const project = {
+      id: idValue || id(),
+      name: $("name").value.trim(),
+      category: $("category").value,
+      description: $("description").value.trim(),
+      image, demo, github,
+      tech: $("tech").value.trim(),
+      status: $("status").value,
+      date: $("date").value,
+      featured: $("featured").checked,
+      created: old?.created || Date.now()
+    };
+
+    if (old) {
+      projects = projects.map(p => p.id === idValue ? project : p);
+      message("Project updated successfully.");
+    } else {
+      projects.unshift(project);
+      message("New project added successfully.");
+    }
+
+    save();
+    updateFilters();
+    render();
+    closeForm();
+  });
+
+  $("projectGrid").addEventListener("click", event => {
+    const edit = event.target.closest("[data-edit]");
+    const del = event.target.closest("[data-delete]");
+    const duplicate = event.target.closest("[data-duplicate]");
+
+    if (edit) {
+      const project = projects.find(p => p.id === edit.dataset.edit);
+      if (project) openForm(project);
+    }
+
+    if (del) {
+      const project = projects.find(p => p.id === del.dataset.delete);
+      if (project && confirm(`Delete "${project.name}"?`)) {
+        projects = projects.filter(p => p.id !== project.id);
+        save();
+        updateFilters();
+        render();
+        message("Project deleted.");
+      }
+    }
+
+    if (duplicate) {
+      const project = projects.find(p => p.id === duplicate.dataset.duplicate);
+      if (project) {
+        projects.unshift({
+          ...project,
+          id: id(),
+          name: project.name + " (Copy)",
+          featured: false,
+          created: Date.now()
+        });
+        save();
+        updateFilters();
+        render();
+        message("Project duplicated.");
+      }
+    }
+  });
+
+  $("search").addEventListener("input", render);
+  $("filter").addEventListener("change", render);
+  $("sort").addEventListener("change", render);
+
+  $("exportBtn").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(projects, null, 2)], {
+      type: "application/json"
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "mahir-elite-projects.json";
+    link.click();
+    URL.revokeObjectURL(url);
+    message("Backup exported.");
+  });
+
+  $("importBtn").addEventListener("click", () => $("importFile").click());
+
+  $("importFile").addEventListener("change", event => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (!Array.isArray(data) ||
+            data.some(p => !p || typeof p.name !== "string")) {
+          throw new Error("Invalid project backup");
+        }
+
+        if (!confirm("Importing will replace your current projects. Continue?")) return;
+
+        projects = data.map(p => ({
+          ...p,
+          id: p.id || id(),
+          created: p.created || Date.now()
+        }));
+
+        save();
+        updateFilters();
+        render();
+        message("Projects imported.");
+      } catch {
+        alert("Invalid JSON backup file.");
+      }
+      event.target.value = "";
+    };
+    reader.readAsText(file);
+  });
+
+  load();
+  updateFilters();
+  render();
+})();
+</script>
+<script src="shared-sync.js"></script>
+</body>
+</html>
